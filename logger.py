@@ -17,10 +17,11 @@ DEFAULT_COLOR_DARK = "#3b3b3b"
 class LogLevel:
     DEBUG = 0
     INFO = 1
-    WARNING = 2
-    ERROR = 3
-    CRITICAL = 4
-    OFF = 5
+    SUCCESS = 2
+    WARNING = 3
+    ERROR = 4
+    CRITICAL = 5
+    OFF = 6
 
 def modify(modifier: dict = {}):
     if os.path.exists(PATH):
@@ -313,9 +314,10 @@ console = Console()
 
 class FancyLogger(logging.Logger):
     LEVEL_STYLES = {
-        "PLAIN": f"bold {STANDRD_COLOR}",
-        "DEBUG": "bold #00bfff",
-        "INFO": "bold #00ff00",
+        "PLAIN": f"bold {DEFAULT_COLOR}",
+        "DEBUG": "bold #ff00ff",
+        "INFO": "bold #00bfff",
+        "SUCCESS": "bold #00ff00",
         "WARNING": "bold #ffff00",
         "ERROR": "bold #ff0000",
         "CRITICAL": "bold #ff00ff",
@@ -374,6 +376,11 @@ class FancyLogger(logging.Logger):
         if get_log_level() > LogLevel.INFO:
             return
         self._log_with_prefix(level_name="INFO", text=text, prefix=prefix, in_new_line=in_new_line, end=end)
+
+    def success(self, text, prefix=None, in_new_line: bool = False, end="\n"):
+        if get_log_level() > LogLevel.SUCCESS:
+            return
+        self._log_with_prefix(level_name="SUCCESS", text=text, prefix=prefix, in_new_line=in_new_line, end=end)
 
     def warn(self, text, prefix=None, in_new_line: bool = False, end="\n"):
         if get_log_level() > LogLevel.WARNING:
