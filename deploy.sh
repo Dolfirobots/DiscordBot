@@ -16,12 +16,25 @@ echo "----------------------------------------------"
 echo "[0/6] starting deployment: $APP_NAME, $TICKET_APP_NAME"
 echo "----------------------------------------------"
 
-# 1. Update Code
-echo "[1/6] pulling latest changes from GitHub..."
+# 1. Update code and check
+echo "[1/6] checking for latest changes from GitHub..."
 git fetch origin main
+
+OLD_COMMIT=$(git rev-parse HEAD)
+
 git reset --hard origin/main
-# Set perms
 chmod +x deploy.sh
+
+NEW_COMMIT=$(git rev-parse HEAD)
+
+if [ "$OLD_COMMIT" = "$NEW_COMMIT" ]; then
+    echo "----------------------------------------------"
+    echo "No changes detected. Skipping restart."
+    echo "----------------------------------------------"
+    exit 0
+fi
+
+echo "New changes detected! Proceeding with update..."
 
 # 2. Virtual Environment Setup
 if [ ! -d "venv" ]; then
@@ -51,7 +64,7 @@ if pm2 describe "$APP_NAME" > /dev/null 2>&1; then
     echo "Restarting $APP_NAME..."
     pm2 restart "$APP_NAME"
 else
-    echo "Starting $APP_NAME for the first time..."
+    echo "Starting $APP_NAME..."
     pm2 start ./venv/bin/python --name "$APP_NAME" -- "$MAIN_FILE"
 fi
 
@@ -61,7 +74,7 @@ if pm2 describe "$TICKET_APP_NAME" > /dev/null 2>&1; then
     echo "Restarting $TICKET_APP_NAME..."
     pm2 restart "$TICKET_APP_NAME"
 else
-    echo "Starting $TICKET_APP_NAME for the first time..."
+    echo "Starting $TICKET_APP_NAME..."
     pm2 start ./venv/bin/python --name "$TICKET_APP_NAME" -- "$MAIN_FILE" --ticket
 fi
 
