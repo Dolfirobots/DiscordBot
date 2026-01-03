@@ -42,18 +42,21 @@ fi
 
 # 5. Process Management (Main Bot)
 echo "[4/6] managing $APP_NAME process..."
-if pm2 list | grep -q "$APP_NAME"; then
+if pm2 describe "$APP_NAME" > /dev/null 2>&1; then
+    echo "Restarting $APP_NAME..."
     pm2 restart "$APP_NAME"
 else
+    echo "Starting $APP_NAME for the first time..."
     pm2 start ./venv/bin/python --name "$APP_NAME" -- "$MAIN_FILE"
 fi
 
 # 6. Process Management (Ticket Bot)
 echo "[5/6] managing $TICKET_APP_NAME process..."
-if pm2 list | grep -q "$TICKET_APP_NAME"; then
+if pm2 describe "$TICKET_APP_NAME" > /dev/null 2>&1; then
+    echo "Restarting $TICKET_APP_NAME..."
     pm2 restart "$TICKET_APP_NAME"
 else
-    # Assuming the ticket bot has its own entry file
+    echo "Starting $TICKET_APP_NAME for the first time..."
     pm2 start ./venv/bin/python --name "$TICKET_APP_NAME" -- "$MAIN_FILE" --ticket
 fi
 
