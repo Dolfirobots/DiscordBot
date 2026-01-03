@@ -5,7 +5,6 @@ APP_NAME="dolfi-bot"
 TICKET_APP_NAME="dolfi-ticket-bot"
 PYTHON_BIN="python3"
 MAIN_FILE="main.py"
-TICKET_MAIN_FILE="main.py --ticket"
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Ensure we are in the correct directory
@@ -55,7 +54,7 @@ if pm2 list | grep -q "$TICKET_APP_NAME"; then
     pm2 restart "$TICKET_APP_NAME"
 else
     # Assuming the ticket bot has its own entry file
-    pm2 start ./venv/bin/python --name "$TICKET_APP_NAME" -- "$TICKET_MAIN_FILE"
+    pm2 start ./venv/bin/python --name "$TICKET_APP_NAME" -- "$MAIN_FILE" --ticket
 fi
 
 # Finalizing
