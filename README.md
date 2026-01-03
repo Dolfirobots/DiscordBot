@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://cdn.discordapp.com/attachments/1456330602641883299/1456330649584795668/banner_dolfimc.png?ex=6957f91c&is=6956a79c&hm=7248a5cba7a0893859ea330f542bc95b34d4fc9838c0ed7893bd69d2f0a9ced5&" width="1000">
+  <img src="https://cdn.discordapp.com/attachments/1457067335998373929/1457067424913293536/banner_dolfimc.png?ex=695aa749&is=695955c9&hm=cdd127a7188c2e9ae454dd8ce42ec01803713f0c8bde8aecdb894e95c782c447&" width="1000">
   <h1>Dolfirobots Network Discord Bot</h1>
   <p>A Discord Bot for the Dolfirobots Community Server</p>
 </div>
@@ -22,13 +22,27 @@ with a lot of functions.
 ---
 
 ## ✨ Features
-- *Nothing to show here* 
+- ✨ Cool join message
+- ✨ Cool leave message
+- 2️⃣ Dual code for 2 bot systems:
+  - Ticket Bot
+  - Main Bot
 
 ## ⏳ Planned
 - 💾 SQLite support
 - 🎟️ Ticket system
-- 🔥 Cool message support (Embeds)
-- 🟢 Stable release
+  - ✨ AI support (Local AI)
+- ⚠️ Report message
+- 🤣 /meme command
+- 📗 /help command
+
+---
+
+## Create a new module
+
+How to create a new module is explained here: [Example](https://github.com/Dolfirobots/DiscordBot/blob/main/modules/_example.py)
+
+---
 
 ## 📜 License
 
