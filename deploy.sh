@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # --- Configuration ---
 APP_NAME="dolfi-bot"
 TICKET_APP_NAME="dolfi-ticket-bot"
@@ -16,7 +18,8 @@ echo "----------------------------------------------"
 
 # 1. Update Code
 echo "[1/6] pulling latest changes from GitHub..."
-git pull origin main
+git fetch origin main
+git reset --hard origin/main
 
 # 2. Virtual Environment Setup
 if [ ! -d "venv" ]; then
