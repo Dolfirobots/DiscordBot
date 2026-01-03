@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# --- Configuration ---
+APP_NAME="dolfi-bot"
+TICKET_APP_NAME="dolfi-ticket-bot"
+PYTHON_BIN="python3"
+MAIN_FILE="main.py"
+TICKET_MAIN_FILE="main.py --ticket"
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Ensure we are in the correct directory
+cd "$REPO_DIR"
+
+echo "----------------------------------------------"
+echo "[0/6] starting deployment: $APP_NAME, $TICKET_APP_NAME"
+echo "----------------------------------------------"
+
+# 1. Update Code
+echo "[1/6] pulling latest changes from GitHub..."
+git pull origin main
+
+# 2. Virtual Environment Setup
+if [ ! -d "venv" ]; then
+    echo "[2/6] creating virtual environment..."
+    $PYTHON_BIN -m venv venv
+else
+    echo "[2/6] virtual environment already exists."
+fi
+
+# 3. Dependencies
+echo "[3/6] installing/updating dependencies..."
+./venv/bin/pip install --upgrade pip
+./venv/bin/pip install -r requirements.txt
+
+# 4. Environment Check
+if [ ! -f ".env" ]; then
+    echo "-------------------------------------------------------"
+    echo "ERROR: .env file missing in $REPO_DIR"
+    echo "Please create it manually or upload it once."
+    echo "-------------------------------------------------------"
+    exit 1
+fi
+
+# 5. Process Management (Main Bot)
+echo "[4/6] managing $APP_NAME process..."
+if pm2 list | grep -q "$APP_NAME"; then
+    pm2 restart "$APP_NAME"
+else
+    pm2 start ./venv/bin/python --name "$APP_NAME" -- "$MAIN_FILE"
+fi
+
+# 6. Process Management (Ticket Bot)
+echo "[5/6] managing $TICKET_APP_NAME process..."
+if pm2 list | grep -q "$TICKET_APP_NAME"; then
+    pm2 restart "$TICKET_APP_NAME"
+else
+    # Assuming the ticket bot has its own entry file
+    pm2 start ./venv/bin/python --name "$TICKET_APP_NAME" -- "$TICKET_MAIN_FILE"
+fi
+
+# Finalizing
+echo "[6/6] saving PM2 process list..."
+pm2 save --force
+
+echo "----------------------------------------------"
+echo "Deployment finished successfully!"
+echo "Use 'pm2 status' to check your bots."
+echo "----------------------------------------------"
