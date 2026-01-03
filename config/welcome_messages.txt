@@ -1,0 +1,36 @@
+%s joined the pod.
+%s, hope you brought fish.
+A wild %s appeared.
+%s, stay salty.
+Welcome %s. Watch out for the splash.
+%s just dove in.
+%s, welcome to the dolfi club.
+%s is here. Keep flipping.
+Dolfi likes %s already.
+%s joined. Don't tell the sharks.
+%s, glad you're here.
+%s just jumped the waves.
+Welcome %s. Avoid the creepers.
+%s, hope you can swim.
+%s just landed on the reef.
+%s is here. Splash!
+Welcome %s. Fin-tastic.
+# part 2
+%s joined. Dolfi is watching.
+%s spawned in a desert temple.
+%s, watch out for creepers.
+%s, don't dig straight down.
+%s just joined the server.
+%s finally compiled without errors.
+%s, is it a bug or a feature?
+%s is now part of the source code.
+Welcome %s. Hope your ping is low.
+%s just found diamonds.
+%s, did you try turning it off and on?
+%s entered the chunk.
+Welcome %s. Code or be coded.
+%s just hit a breakpoint.
+%s, welcome to Dolfis base.
+%s, don't grief the coral reef.
+Welcome %s. Main branch updated.
+%s just pushed to production.

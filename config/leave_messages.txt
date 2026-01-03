@@ -1,0 +1,37 @@
+# Dolfi selection
+%s left the pod. 
+%s swam away.
+%s headed for deeper waters.
+Dolfi will miss %s. Maybe.
+%s followed the fish.
+%s jumped out of the tank.
+%s is lost at sea.
+%s found a different reef.
+%s, watch out for the sharks.
+%s, thanks for all the fish.
+%s dove too deep.
+
+# Minecraft Section
+%s fell out of the world.
+%s was blown up by a creeper.
+%s left the game.
+%s's bed was obstructed.
+%s disconnected from the server.
+%s fell from a high place.
+%s tried to swim in lava.
+%s ran out of hunger.
+%s was slain by Enderman.
+%s hit the ground too hard.
+%s's connection timed out.
+%s went back to the title screen.
+
+# Coding and Tech Section
+%s: Connection closed by remote host.
+%s pushed their last commit.
+Process %s terminated with exit code 0.
+%s logged out.
+%s: 404 Member Not Found.
+%s dropped the packet.
+%s is now deprecated.
+%s uninstalled life.
+%s cleared the cache.
