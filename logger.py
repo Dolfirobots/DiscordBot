@@ -1,20 +1,20 @@
-import json
-import logging
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
+import json
+import logging
+import time
 from rich.console import Console
 from rich.text import Text
 from rich.style import Style
-
 from enum import Enum
 
-PATH = "settings.json"
-
+# Default styles
 DEFAULT_COLOR = "#a0a0a0"
 DEFAULT_COLOR_DARK = "#3b3b3b"
 
-class LogLevel:
+# Log level
+
+class LogLevel():
     DEBUG = 0
     INFO = 1
     SUCCESS = 2
@@ -23,41 +23,25 @@ class LogLevel:
     CRITICAL = 5
     OFF = 6
 
-def modify(modifier: dict = {}):
-    if os.path.exists(PATH):
-        with open(PATH, "r", encoding="utf-8") as f:
-            try:
-                config = json.load(f)
-            except json.JSONDecodeError:
-                config = {}
-    else:
-        config = {}
-    config.update(modifier)
-    os.makedirs(os.path.dirname(PATH), exist_ok=True)
-    with open(PATH, "w", encoding="utf-8") as f:
-        json.dump(config, f, indent=4)
+    NAMED_LEVELS = {
+        DEBUG: "DEBUG",
+        INFO: "INFO",
+        SUCCESS: "SUCCESS",
+        WARNING: "WARNING",
+        ERROR: "ERROR",
+        CRITICAL: "CRITICAL",
+        OFF: "OFF",
+    }
 
-def get_config() -> dict | None:
-    if not os.path.exists(PATH):
-        return None
-    with open(PATH, "r", encoding="utf-8") as f:
-        try:
-            config = json.load(f)
-        except json.JSONDecodeError:
-            return None
-    return config
+    def from_string(level_str: str) -> int:
+        level_str = level_str.upper()
+        for level, name in LogLevel.NAMED_LEVELS.items():
+            if name == level_str:
+                return level
+        
+CURRENT_LOG_LEVEL = LogLevel.INFO
 
-def get_log_level() -> LogLevel:
-    config = get_config()
-    if not config:
-        return LogLevel.INFO
-    log_level = config.get("log_level")
-    return log_level
-
-def set_log_level(log_level: LogLevel = None):
-    if log_level is not None:
-        modify({"log_level": log_level})
-
+# Gradient
 class GradientMode(Enum):
     CHARS = "chars"
     LINES = "lines"
@@ -325,8 +309,14 @@ class FancyLogger(logging.Logger):
 
     def _log_with_prefix(self, level_name, text, prefix=None, in_new_line: bool = False, end="\n"):
         style = self.LEVEL_STYLES.get(level_name, "")
+
+        current_time = time.strftime("%H:%M:%S", time.localtime())
+
         prefix_str = (
             f"[bold {DEFAULT_COLOR_DARK}][[/bold {DEFAULT_COLOR_DARK}]"
+            f"[bold {DEFAULT_COLOR}]{current_time}[/bold {DEFAULT_COLOR}]"
+            f"[bold {DEFAULT_COLOR_DARK}]][/bold {DEFAULT_COLOR_DARK}]"
+            f" [bold {DEFAULT_COLOR_DARK}][[/bold {DEFAULT_COLOR_DARK}]"
             f"[{style}]{level_name}[/{style}]"
             f"[bold {DEFAULT_COLOR_DARK}]][/bold {DEFAULT_COLOR_DARK}]"
         )
@@ -346,10 +336,16 @@ class FancyLogger(logging.Logger):
         console.print(prefix_str, text, sep=" ", end=end, new_line_start=in_new_line)
 
     def plain(self, text, prefix=None, in_new_line: bool = False, end="\n"):
-        if get_log_level() > LogLevel.OFF:
+        if CURRENT_LOG_LEVEL > LogLevel.OFF:
             return
 
-        prefix_str = ""
+        current_time = time.strftime("%H:%M:%S", time.localtime())
+
+        prefix_str = (
+            f"[bold {DEFAULT_COLOR_DARK}][[/bold {DEFAULT_COLOR_DARK}]"
+            f"[bold {DEFAULT_COLOR}]{current_time}[/bold {DEFAULT_COLOR}]"
+            f"[bold {DEFAULT_COLOR_DARK}]][/bold {DEFAULT_COLOR_DARK}]"
+        )
 
         if prefix:
             prefix_str = (
@@ -368,37 +364,37 @@ class FancyLogger(logging.Logger):
             console.print(text, end=end, new_line_start=in_new_line)
 
     def debug(self, text, prefix=None, in_new_line: bool = False, end="\n"):
-        if get_log_level() > LogLevel.DEBUG:
+        if CURRENT_LOG_LEVEL > LogLevel.DEBUG:
             return
         self._log_with_prefix(level_name="DEBUG", text=text, prefix=prefix, in_new_line=in_new_line, end=end)
 
     def info(self, text, prefix=None, in_new_line: bool = False, end="\n"):
-        if get_log_level() > LogLevel.INFO:
+        if CURRENT_LOG_LEVEL > LogLevel.INFO:
             return
         self._log_with_prefix(level_name="INFO", text=text, prefix=prefix, in_new_line=in_new_line, end=end)
 
     def success(self, text, prefix=None, in_new_line: bool = False, end="\n"):
-        if get_log_level() > LogLevel.SUCCESS:
+        if CURRENT_LOG_LEVEL > LogLevel.SUCCESS:
             return
         self._log_with_prefix(level_name="SUCCESS", text=text, prefix=prefix, in_new_line=in_new_line, end=end)
 
     def warn(self, text, prefix=None, in_new_line: bool = False, end="\n"):
-        if get_log_level() > LogLevel.WARNING:
+        if CURRENT_LOG_LEVEL > LogLevel.WARNING:
             return
         self._log_with_prefix(level_name="WARNING", text=text, prefix=prefix, in_new_line=in_new_line, end=end)
 
     def warning(self, text, prefix=None, in_new_line: bool = False, end="\n"):
-        if get_log_level() > LogLevel.WARNING:
+        if CURRENT_LOG_LEVEL > LogLevel.WARNING:
             return
         self._log_with_prefix(level_name="WARNING", text=text, prefix=prefix, in_new_line=in_new_line, end=end)
 
     def error(self, text, prefix=None, in_new_line: bool = False, end="\n"):
-        if get_log_level() > LogLevel.ERROR:
+        if CURRENT_LOG_LEVEL > LogLevel.ERROR:
             return
         self._log_with_prefix(level_name="ERROR", text=text, prefix=prefix, in_new_line=in_new_line, end=end)
 
     def critical(self, text, prefix=None, in_new_line: bool = False, end="\n"):
-        if get_log_level() > LogLevel.CRITICAL:
+        if CURRENT_LOG_LEVEL > LogLevel.CRITICAL:
             return
         self._log_with_prefix(level_name="CRITICAL", text=text, prefix=prefix, in_new_line=in_new_line, end=end)
 
