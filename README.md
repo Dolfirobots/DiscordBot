@@ -38,7 +38,7 @@ with a lot of functions.
 
 ---
 
-## Create a new module
+## ➕ Creating a new module
 
 How to create a new module is explained here: [Example](https://github.com/Dolfirobots/DiscordBot/blob/main/modules/_example.py)
 
