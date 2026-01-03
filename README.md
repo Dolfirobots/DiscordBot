@@ -24,7 +24,7 @@ with a lot of functions.
 ## ✨ Features
 - ✨ Cool join message
 - ✨ Cool leave message
-- 2️⃣ Dual code for 2 bot systems:
+- 2️⃣ Dual mode for 2 bot systems:
   - Ticket Bot
   - Main Bot
 
