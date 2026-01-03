@@ -32,13 +32,19 @@ class Config:
         try:
             async with aiofiles.open(self.path, mode='r', encoding='utf-8') as f:
                 content = await f.read()
-                lines = [
-                    line.strip() 
+                if with_comments:
+                    return [
+                        line.strip() 
+                        for line in content.splitlines() 
+                        if line.strip()
+                    ]
+                
+                return [
+                    line.split("#")[0].strip() 
                     for line in content.splitlines() 
-                    if line.strip() and (not with_comments and not line.strip().startswith("#"))
+                    if line.split("#")[0].strip()
                 ]
-            return lines
         except Exception as e:
-            logger.error(f"Error reading config file {self.path}: {e}")
+            logger.error(f"Error reading and parsing config file {self.path}: {e}")
             return []
         
