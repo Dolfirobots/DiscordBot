@@ -1,10 +1,28 @@
+# Give your module a descriptive name
+# For example, if the module handles a ping command, you could name it welcome_listener.py
+# The name is always in snake_case written
+# Give the the file a suffix:
+# *_command.py  : if it mainly contains commands
+# *_listener.py : if it mainly contains event listeners
+# *_module.py   : if it contains a mix of both commands and listeners
+# Add a prefix:
+# _*    : for ignoring the module during loading
+# dev_* : modules are only loaded in developer mode (if you add the --dev argument when starting the bot)
+
 import disnake
 from disnake.ext import commands
 
-# Use a good name for the module
+# The class name should also reflect the module's functionality
+# Use CamelCase for class names
 class ExampleModule(commands.Cog):
+    # Your class variables
     def __init__(self, bot):
         self.bot = bot
+
+    # Add here you init code if needed
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("ExampleModule is ready!")
 
     # Add your commands and listeners here
     # You need to call the function the same as you want the command to be called in Discord
@@ -30,6 +48,6 @@ class ExampleModule(commands.Cog):
 
 # Setup function to add the module to the bot
 # Do not change this function
-# You can add more lines but do not remove the function itself
+# You can add your init code in the on_ready function
 def setup(bot):
     bot.add_cog(ExampleModule(bot))
