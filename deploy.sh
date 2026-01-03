@@ -20,6 +20,8 @@ echo "----------------------------------------------"
 echo "[1/6] pulling latest changes from GitHub..."
 git fetch origin main
 git reset --hard origin/main
+# Set perms
+chmod +x deploy.sh
 
 # 2. Virtual Environment Setup
 if [ ! -d "venv" ]; then
