@@ -21,6 +21,7 @@ OLD_COMMIT=$(git rev-parse HEAD)
 
 git reset --hard origin/main
 chmod +x deploy.sh
+chmod +x deploy_start.sh
 
 NEW_COMMIT=$(git rev-parse HEAD)
 
