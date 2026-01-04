@@ -10,6 +10,10 @@ class Utility(commands.Cog):
     async def meme(self, inter: disnake.ApplicationCommandInteraction):
         url = "https://meme-api.com/gimme"
 
+        if inter.channel_id != 1456369811478282415:
+            await inter.response.send_message("This command can only be used in <#1456369811478282415>!", ephemeral=True)
+            return
+
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 data = await resp.json()
