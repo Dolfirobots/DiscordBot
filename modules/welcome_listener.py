@@ -1,7 +1,6 @@
 import disnake
 from disnake.ext import commands
 import random
-import asyncio
 
 from config import Config, FileType
 from logger import logger
@@ -17,8 +16,8 @@ class EventListener(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        WELCOME_CONFIG.validate()
-        LEAVE_CONFIG.validate()
+        await WELCOME_CONFIG.validate()
+        await LEAVE_CONFIG.validate()
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -36,8 +35,9 @@ class EventListener(commands.Cog):
 
             try:
                 formatted_name = raw_message % member.display_name
-            except TypeError:
-                formatted_name = f"{member.display_name} joined us!"
+            except TypeError as e:
+                logger.warning(f"Welcome message formatting failed, using fallback. Message: {raw_message}, Error: {e}")
+                formatted_name = f"{member.display_name} just joined us!"
 
             embed.set_author(
                 name=formatted_name,
@@ -68,8 +68,9 @@ class EventListener(commands.Cog):
 
             try:
                 formatted_name = raw_message % member.display_name
-            except TypeError:
-                formatted_name = f"{member.display_name} left us!"
+            except TypeError as e:
+                logger.warning(f"Leave message formatting failed, using fallback. Message: {raw_message}, Error: {e}")
+                formatted_name = f"{member.display_name} just left us!"
 
             embed.set_author(
                 name=formatted_name,
