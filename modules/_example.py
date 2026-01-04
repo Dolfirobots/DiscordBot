@@ -4,10 +4,14 @@
 # Give the the file a suffix:
 # *_command.py  : if it mainly contains commands
 # *_listener.py : if it mainly contains event listeners
-# *_module.py   : if it contains a mix of both commands and listeners
+# *_module.py   : if it contains a mix of both commands and listeners or other functionalities
 # Add a prefix:
 # _*    : for ignoring the module during loading
 # dev_* : modules are only loaded in developer mode (if you add the --dev argument when starting the bot)
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))) # Replace .. with the correct path if needed
 
 import disnake
 from disnake.ext import commands
