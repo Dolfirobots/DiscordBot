@@ -6,17 +6,17 @@ import disnake
 from disnake.ext import commands
 import random
 
-from config import Config, FileType
+from config import Config
 from logger import logger
 
 # Variables
-WELCOME_CONFIG = Config("welcome_messages.txt", FileType.TXT)
-LEAVE_CONFIG = Config("leave_messages.txt", FileType.TXT)
+WELCOME_CONFIG = Config("welcome_messages.txt")
+LEAVE_CONFIG = Config("leave_messages.txt")
 
 
 class EventListener(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: commands.Bot = bot
     
     @commands.Cog.listener()
     async def on_ready(self):
@@ -24,7 +24,7 @@ class EventListener(commands.Cog):
         await LEAVE_CONFIG.validate()
 
     @commands.Cog.listener()
-    async def on_member_join(self, member):
+    async def on_member_join(self, member: disnake.Member):
         channel = member.guild.system_channel
         if channel:
             embed = disnake.Embed(
@@ -58,12 +58,13 @@ class EventListener(commands.Cog):
             await channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_member_remove(self, member):
+    async def on_member_remove(self, member: disnake.Member):
         channel = member.guild.system_channel
         if channel:
             embed = disnake.Embed(
-                description=f"{member.display_name} has left the server."
-                            f"\n - Total Members: **{member.guild.member_count}**",
+                description=f"{member.mention} has left the server."
+                            f"\n - Total Members: **{member.guild.member_count}**"
+                            f"\n - Joined: {disnake.utils.format_dt(member.joined_at, style='R')}",
                 color=0xe74c3c,
                 timestamp=disnake.utils.utcnow()
             )
