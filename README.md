@@ -27,14 +27,20 @@ with a lot of functions.
 - 2️⃣ Dual mode for 2 bot systems:
   - Ticket Bot
   - Main Bot
+- 🤣 /meme command
+- 🟢 Server stats in profile
+
 
 ## ⏳ Planned
 - 💾 SQLite support
 - 🎟️ Ticket system
   - ✨ AI support (Local AI)
+- 🟢 Server status in channel
 - ⚠️ Report message
-- 🤣 /meme command
 - 📗 /help command
+- 💬 Per user language
+  - German
+  - English
 
 ---
 
