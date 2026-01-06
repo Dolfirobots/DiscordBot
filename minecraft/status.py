@@ -76,7 +76,7 @@ async def get_server_status(ip: str, port: int = 25565, protocol_version: int = 
         return await asyncio.wait_for(_get_server_status(), timeout=timeout)
     
     except asyncio.TimeoutError:
-        logger.warning(f"[{ip}:{port}] Timeout after {timeout} seconds", PREFIX)
+        logger.debug(f"[{ip}:{port}] Timeout after {timeout} seconds", PREFIX)
         return None
     
     except socket.gaierror as e:
