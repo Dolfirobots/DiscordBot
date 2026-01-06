@@ -13,7 +13,7 @@ Dolfi likes %s already.
 Welcome %s. Avoid the creepers.
 %s, hope you can swim.
 %s just landed on the reef.
-%s is here. Splash!
+%s is here. *Splash*
 Welcome %s. Fin-tastic.
 # part 2
 %s joined. Dolfi is watching.
