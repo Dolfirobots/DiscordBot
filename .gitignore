@@ -194,4 +194,6 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,python
 
-config/config.json
+assets/config.json
+assets/tickets.db
+assets/protocol_versions.json
