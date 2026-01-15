@@ -1,15 +1,14 @@
+import asyncio
+import json
+import aiohttp
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-import asyncio
-import json
-import aiohttp
-
 from logger import logger
 
 PREFIX = "Minecraft Versions"
-CACHE_FILE = "config/protocol_versions.json"
+CACHE_FILE = "assets/protocol_versions.json"
 SOURCE_URL = "https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/common/protocolVersions.json"
 
 async def _fetch_remote_data():

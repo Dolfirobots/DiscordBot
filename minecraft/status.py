@@ -1,16 +1,15 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 import asyncio
 import json
 import time
 import zlib
 import socket
 import argparse
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from logger import logger
-from minecraft.utils import encode_varint, encode_string, read_varint, parse_component, get_base64_from_image, strip_mc_formatting
+from minecraft.utils import encode_varint, encode_string, read_varint, parse_component, get_base64_from_image, strip_mc_formatting, DEFAULT_IMAGE
 
 PREFIX = "Server Status"
 
@@ -56,7 +55,7 @@ async def get_server_status(ip: str, port: int = 25565, protocol_version: int = 
             "description": description,
             "plain_description": strip_mc_formatting(description) if description else "",
 
-            "icon": status.get("favicon", f"{get_base64_from_image('config/unknown_server.png')}"),
+            "icon": status.get("favicon", f"{get_base64_from_image(DEFAULT_IMAGE)}"),
             "version_name": status.get("version", {}).get("name", ""),
             "version_protocol": status.get("version", {}).get("protocol", 0),
             
@@ -79,14 +78,12 @@ async def get_server_status(ip: str, port: int = 25565, protocol_version: int = 
         logger.debug(f"[{ip}:{port}] Timeout after {timeout} seconds", PREFIX)
         return None
     
-    except socket.gaierror as e:
-        logger.warning(f"[{ip}:{port}] This is not a Minecraft Server!", PREFIX)
-        return None
-    
     except Exception as e:
         if "0 bytes read on a total of 1 expected bytes" in str(e):
             logger.warning(f"[{ip}:{port}] This server could have turned status off.", PREFIX)
-            return { "icon": get_base64_from_image('assets/unknown_server.png') }
+            return {
+                "icon": get_base64_from_image(DEFAULT_IMAGE)
+            }
         
         logger.error(f"[{ip}:{port}] {str(e).replace("[Errno 111]", "")}", PREFIX)
         return None

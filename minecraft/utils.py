@@ -1,16 +1,16 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 import asyncio
 import base64
 import re
 import uuid
 import zlib
 import aiohttp
-import re
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from logger import logger
+
+DEFAULT_IMAGE = "assets/unknown_server.png"
 
 # Packet encoding/decoding
 
