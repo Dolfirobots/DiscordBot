@@ -1,0 +1,16 @@
+{
+    "roles": {
+        "admin": [1436727940262924400, 1436724409418256535, 1436724428598804666]
+    },
+    "memes": {
+        "allowed_channels": [1456369811478282415]
+    },
+    "ticket": {
+        "log_channel": 1461060999992840416,
+        "ticket_category": 1436725429263138958
+    },
+    "emojis": {
+        "loading": "<a:loading_cycle:1461384150245179465>",
+        "ticket": ":tickets:"
+    }
+}
