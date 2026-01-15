@@ -8,7 +8,6 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 
 from main import MAIN_CONFIG
-from modules import manage_module
 from utils import FooterEmbed
 from logger import logger
 
@@ -60,6 +59,8 @@ class Ticket:
     async def create(self) -> disnake.TextChannel:
         ns_time = time.time_ns()
         
+        from modules import manage_module
+
         guild = self.bot.get_guild(self.guild_id)
         if not guild:
             guild = await self.bot.fetch_guild(self.guild_id)
