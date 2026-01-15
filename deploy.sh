@@ -10,7 +10,7 @@ REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$REPO_DIR"
 
 echo "----------------------------------------------"
-echo "[0/5] starting deployment: $APP_NAME"
+echo "[0/5] starting deployment: dolfi-bot"
 echo "----------------------------------------------"
 
 # Update code and check
@@ -58,5 +58,5 @@ fi
 
 echo "----------------------------------------------"
 echo "Deployment finished successfully!"
-echo "Use 'pm2 status' to check your bots."
+echo "Use 'pm2 status' to check your bot."
 echo "----------------------------------------------"

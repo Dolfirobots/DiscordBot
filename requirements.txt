@@ -3,8 +3,11 @@ aiohappyeyeballs==2.6.1
 aiohttp==3.13.2
 aiomysql==0.3.2
 aiosignal==1.4.0
+aiosqlite==0.22.1
+asyncio-dgram==2.2.0
 attrs==25.4.0
 disnake==2.11.0
+dnspython==2.8.0
 frozenlist==1.8.0
 idna==3.11
 markdown-it-py==4.0.0
@@ -15,5 +18,6 @@ Pygments==2.19.2
 PyMySQL==1.1.2
 python-dotenv==1.2.1
 rich==14.2.0
+setuptools==80.9.0
 typing_extensions==4.15.0
 yarl==1.22.0
