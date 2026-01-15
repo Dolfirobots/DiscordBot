@@ -1,9 +1,8 @@
+import disnake
+from disnake.ext import commands, tasks
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-import disnake
-from disnake.ext import commands, tasks
 
 from minecraft.status import get_server_status
 
@@ -25,14 +24,14 @@ class StatusModule(commands.Cog):
             online = status.get("players_online", 0)
             max = status.get("players_max", 0)
             activity = disnake.Activity(
-                type=disnake.ActivityType.watching, 
-                name=f"{self.mc_ip}: {online}/{max}"
+                type=disnake.ActivityType.playing, 
+                name=f"🟢 DolfiMC: {online}/{max}"
             )
 
         else:
             activity = disnake.Activity(
-                type=disnake.ActivityType.competing, 
-                name="🔴 Offline"
+                type=disnake.ActivityType.watching, 
+                name="🔴 DolfiMC is Offline"
             )
         
         await self.bot.change_presence(activity=activity)
