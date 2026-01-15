@@ -10,11 +10,11 @@ REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$REPO_DIR"
 
 echo "----------------------------------------------"
-echo "[0/6] starting deployment: $APP_NAME, $TICKET_APP_NAME"
+echo "[0/5] starting deployment: $APP_NAME"
 echo "----------------------------------------------"
 
 # Update code and check
-echo "[1/6] checking for latest changes from GitHub..."
+echo "[1/5] checking for latest changes from GitHub..."
 git fetch origin main
 
 OLD_COMMIT=$(git rev-parse HEAD)
@@ -27,14 +27,14 @@ NEW_COMMIT=$(git rev-parse HEAD)
 
 # Virtual Environment Setup
 if [ ! -d "venv" ]; then
-    echo "[2/6] creating virtual environment..."
+    echo "[2/5] creating virtual environment..."
     $PYTHON_BIN -m venv venv
 else
-    echo "[2/6] virtual environment already exists."
+    echo "[2/5] virtual environment already exists."
 fi
 
 # Dependencies
-echo "[3/6] installing/updating dependencies..."
+echo "[3/5] installing/updating dependencies..."
 ./venv/bin/pip install --upgrade pip
 ./venv/bin/pip install -r requirements.txt
 
