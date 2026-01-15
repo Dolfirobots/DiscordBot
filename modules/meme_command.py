@@ -1,12 +1,17 @@
+import asyncio
 import disnake
 from disnake.ext import commands, tasks
+import time
 import aiohttp
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from logger import logger
 import main
+from utils import ErrorEmbed, FooterEmbed
 
 CACHED_CHANNELS = []
-CACHED_ALLOWED_ROLES = [1436724428598804666, 1436724428728696903, 1436724409418256535] # TODO: Load developer roles from config
 
 class MemeCommand(commands.Cog):
     def __init__(self, bot):
@@ -14,9 +19,9 @@ class MemeCommand(commands.Cog):
         self.update_cache.start()
 
     async def check_permissions(self, ctx):
-        global CACHED_ALLOWED_ROLES
+        data = await main.MAIN_CONFIG.load_json()
         user_role_ids = [role.id for role in ctx.author.roles]
-        if not any(role_id in user_role_ids for role_id in CACHED_ALLOWED_ROLES):
+        if not any(role_id in user_role_ids for role_id in data.get("roles", {}).get("admin", [])):
             return False
         return True
 
@@ -25,66 +30,98 @@ class MemeCommand(commands.Cog):
 
     @tasks.loop(minutes=15)
     async def update_cache(self):
-        global CACHED_CHANNELS, CACHED_ALLOWED_ROLES
+        global CACHED_CHANNELS
         
         data = await main.MAIN_CONFIG.load_json()
-        CACHED_CHANNELS = data.get("memes", {}).get("channels", [])
-        #CACHED_ALLOWED_ROLES = data.get("memes", {}).get("allowed_roles", [])
+        CACHED_CHANNELS = data.get("memes", {}).get("allowed_channels", [])
 
     @commands.slash_command(description="Send a random meme from Reddit")
     async def meme(self, inter: disnake.ApplicationCommandInteraction):
+        ns_time = time.time_ns()
         url = "https://meme-api.com/gimme"
 
         if not CACHED_CHANNELS:
-            embed = main.ERROR_EMBED.copy()
-            embed.description = "Meme commands are currently disabled everywhere."
-            await inter.response.send_message(embed=embed, ephemeral=True)
+            embed = ErrorEmbed(
+                "Meme commands are currently disabled everywhere.",
+                time_ms=time.time_ns() - ns_time,
+                service="Memes"
+            )
+            await inter.response.send_message(embed=embed, ephemeral=True, delete_after=5)
             return
 
         if inter.channel_id not in CACHED_CHANNELS:
             mention_list = [f"<#{channel_id}>" for channel_id in CACHED_CHANNELS]
-            embed = main.ERROR_EMBED.copy()
-            embed.description = f"This command can only be used in following channels: {', '.join(mention_list)}!"
+            embed = ErrorEmbed(
+                f"This command can only be used in following channels: {', '.join(mention_list)}!",
+                time_ms=time.time_ns() - ns_time,
+                service="Memes"
+            )
             await inter.response.send_message(embed=embed, ephemeral=True)
             return
         
-        await inter.response.send_message("*Loading meme...*")
+        data = await main.MAIN_CONFIG.load_json()
+        loading_icon = data.get("emojis", {}).get("loading")
+
+        loading_icon = loading_icon if loading_icon else "🔄️"
+        
+        await inter.response.send_message(f"{loading_icon} *Loading meme...*")
 
         async with aiohttp.ClientSession() as session:
             attempts = 0
             max_attempts = 10
-            
+            timeout = aiohttp.ClientTimeout(total=6)
+
+            # Skipping NSFW content
             while attempts < max_attempts:
                 attempts += 1
-                async with session.get(url) as resp:
-                    if resp.status != 200:
-                        await inter.edit_original_response(embed=main.ERROR_EMBED)
-                        return
-                    
-                    data = await resp.json()
-                    if not data.get("nsfw", False):
-                        break
-                    logger.warning(f"Skipped NSFW meme (Attempt {attempts}/{max_attempts})", "MemeAPI")
-
-            if data.get("nsfw", True):
-                await inter.edit_original_response(embed=main.ERROR_EMBED)
-                return
+                try:
+                    async with session.get(url, timeout=timeout) as resp:
+                        if resp.status != 200:
+                            await inter.edit_original_response(content=None, embed=ErrorEmbed())
+                            return
+                        
+                        data = await resp.json()
+                        if not data.get("nsfw", False):
+                            break
+                            
+                except asyncio.TimeoutError:
+                    logger.error("Took too long to request a meme (Timeout)", "Meme Command")
+                    await inter.edit_original_response(content=None, embed=ErrorEmbed(
+                        "API is probaly down. Check later again.",
+                        service="Memes",
+                        time=time.time_ns() - ns_time
+                    ))
+                    return
+                except Exception as e:
+                    logger.error(f"Connection error: {e}", "Meme Command")
+                    await inter.edit_original_response(content=None, embed=ErrorEmbed(
+                        time_ms=time.time_ns() - ns_time,
+                        service="Memes"
+                    ))
+                    return
 
         embed = disnake.Embed(
             title=data["title"], 
             color=disnake.Color.random() 
         )
         embed.set_image(url=data["url"]) 
-        embed.set_footer(text=f"👍 {data['ups']} | r/{data['subreddit']}") 
 
+        embed = FooterEmbed(
+            embed=embed,
+            text=f"👍 {data['ups']}  |  u/{data['author']}",
+            time=time.time_ns() - ns_time,
+            service="Memes"
+        )
         embed.set_author(
-            name=f"u/{data['author']}", 
+            name=f"r/{data['subreddit']}", 
             icon_url="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png",
-            url=f"https://reddit.com/u/{data['author']}"
+            url=f"https://reddit.com/r/{data['subreddit']}"
         )
 
+        logger.info(f"Generated a meme by @{inter.author.name} ({inter.author.mention})")
         await inter.edit_original_response(content=None, embed=embed)
     
+    # Deprecated
     @commands.group(name="memes", invoke_without_command=True)
     async def memes(self, ctx: commands.Context):
         if not await self.check_permissions(ctx):
@@ -109,14 +146,14 @@ class MemeCommand(commands.Cog):
         data = await config.load_json()
         
         if "memes" not in data:
-            data["memes"] = {"channels": []}
+            data["memes"] = {"allowed_channels": []}
         
-        channels = data["memes"]["channels"]
+        channels = data["memes"]["allowed_channels"]
         channel_id = ctx.channel.id
 
         if channel_id not in channels:
             channels.append(channel_id)
-            data["memes"]["channels"] = channels
+            data["memes"]["allowed_channels"] = channels
             await config.save_json(data)
             
             global CACHED_CHANNELS
@@ -139,12 +176,12 @@ class MemeCommand(commands.Cog):
         config = main.MAIN_CONFIG
         data = await config.load_json()
         
-        channels = data.get("memes", {}).get("channels", [])
+        channels = data.get("memes", {}).get("allowed_channels", [])
         channel_id = ctx.channel.id
 
         if channel_id in channels:
             channels.remove(channel_id)
-            data["memes"]["channels"] = channels
+            data["memes"]["allowed_channels"] = channels
             await config.save_json(data)
 
             global CACHED_CHANNELS
