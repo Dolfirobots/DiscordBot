@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://cdn.discordapp.com/attachments/1457067335998373929/1457067424913293536/banner_dolfimc.png?ex=695aa749&is=695955c9&hm=cdd127a7188c2e9ae454dd8ce42ec01803713f0c8bde8aecdb894e95c782c447&" width="1000">
+  <img src="https://cdn.discordapp.com/attachments/1457067335998373929/1457067424913293536/banner_dolfimc.png?ex=696fbf49&is=696e6dc9&hm=39f3e911779c701037bee5db178bf81de726bb1ad0a20222c597b8d26edc8827&" width="1000">
   <h1>Dolfirobots Network Discord Bot</h1>
   <p>A Discord Bot for the Dolfirobots Community Server</p>
 </div>
@@ -24,20 +24,17 @@ with a lot of functions.
 ## ✨ Features
 - ✨ Cool join message
 - ✨ Cool leave message
-- 2️⃣ Dual mode for 2 bot systems:
-  - Ticket Bot
-  - Main Bot
+- 💾 SQLite support
+- 🎟️ Ticket system
 - 🤣 /meme command
 - 🟢 Server stats in profile
 
 
 ## ⏳ Planned
-- 💾 SQLite support
-- 🎟️ Ticket system
-  - ✨ AI support (Local AI)
 - 🟢 Server status in channel
 - ⚠️ Report message
 - 📗 /help command
+- 🏃‍➡️ Make it faster
 - 💬 Per user language
   - German
   - English
