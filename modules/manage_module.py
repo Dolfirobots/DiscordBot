@@ -233,13 +233,7 @@ class ManageModule(commands.Cog):
     async def on_message_edit(self, before: disnake.Message, after: disnake.Message):
         ns_time = time.time_ns()
         if before.author.bot or before.content == after.content:
-            return
-        
-        data = await MAIN_CONFIG.load_json()
-        tickets_category_id = data.get("ticket", {}).get("ticket_category")
-
-        if before.channel.category_id != tickets_category_id:
-            return
+            return None
 
         ticket = await fetch_ticket_by_channel(self.bot, before.channel.id)
         if ticket:
