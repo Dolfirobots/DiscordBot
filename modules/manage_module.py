@@ -37,7 +37,11 @@ class ManageView(disnake.ui.View):
 
         ticket = await fetch_ticket_by_channel(inter.bot, inter.channel_id)
         if not ticket:
-            return await inter.followup.send(embed=ErrorEmbed("No active ticket found!", time_ms=time.time_ns() - ns_time, service="Tickets"), ephemeral=True)
+            return await inter.followup.send(
+                embed=ErrorEmbed("No active ticket found!",
+                                 time=time.time_ns() - ns_time,
+                                 service="Tickets"),
+                ephemeral=True)
 
         if not await check_permissions(inter, ticket):
             return await inter.followup.send(
@@ -49,7 +53,11 @@ class ManageView(disnake.ui.View):
                 )
         
         if ticket.state == TicketState.CLOSED:
-            return await inter.followup.send(embed=ErrorEmbed("Ticket is already closed!", time_ms=time.time_ns() - ns_time, service="Tickets"), ephemeral=True)
+            return await inter.followup.send(
+                embed=ErrorEmbed("Ticket is already closed!",
+                                 time=time.time_ns() - ns_time,
+                                 service="Tickets"),
+                ephemeral=True)
         
         await ticket.update_state(TicketState.CLOSED)
         logger.info(f"Closed ticket by @{inter.author.name}", f"Ticket #{ticket.id}")
