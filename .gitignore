@@ -197,3 +197,5 @@ pyrightconfig.json
 assets/config.json
 assets/tickets.db
 assets/protocol_versions.json
+
+.idea
