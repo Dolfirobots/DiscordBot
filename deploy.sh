@@ -38,10 +38,7 @@ send_discord_embed() {
                 \"description\": \"$STATUS\",
                 \"color\": $COLOR,
                 \"fields\": [
-                    {\"name\": \"🖥 Server\", \"value\": \"$HOSTNAME\", \"inline\": true},
-                    {\"name\": \"👤 User\", \"value\": \"$USERNAME\", \"inline\": true},
                     {\"name\": \"📦 App\", \"value\": \"$APP_NAME\", \"inline\": true},
-
                     {\"name\": \"🔀 Old Commit\", \"value\": \"\`$SHORT_OLD\`\", \"inline\": true},
                     {\"name\": \"✨ New Commit\", \"value\": \"\`$SHORT_NEW\`\", \"inline\": true},
                     {\"name\": \"⚡ Force Mode\", \"value\": \"$FORCE\", \"inline\": true}
