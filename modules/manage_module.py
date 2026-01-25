@@ -29,12 +29,6 @@ class ManageView(disnake.ui.View):
         ns_time = time.time_ns()
         await inter.response.defer()
 
-        data = await MAIN_CONFIG.load_json()
-        tickets_category_id = data.get("ticket", {}).get("ticket_category")
-
-        if inter.channel.category_id != tickets_category_id:
-            return
-
         ticket = await fetch_ticket_by_channel(inter.bot, inter.channel_id)
         if not ticket:
             return await inter.followup.send(
