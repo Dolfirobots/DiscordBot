@@ -201,12 +201,6 @@ class ManageModule(commands.Cog):
         if message.author.bot:
             return
 
-        data = await MAIN_CONFIG.load_json()
-        tickets_category_id = data.get("ticket", {}).get("ticket_category")
-
-        if message.channel.category_id != tickets_category_id:
-            return
-
         ticket = await fetch_ticket_by_channel(self.bot, message.channel)
         if ticket:
             log_channel_id = data.get("ticket", {}).get("log_channel")
