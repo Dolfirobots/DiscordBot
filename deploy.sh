@@ -22,8 +22,6 @@ send_discord_embed() {
     local STATUS="$1"
     local COLOR="$2"
 
-    local HOSTNAME="$(hostname)"
-    local USERNAME="$(whoami)"
     local DATE="$(date -u +"%Y-%m-%d %H:%M:%S UTC")"
     local SHORT_OLD="${OLD_COMMIT:0:7}"
     local SHORT_NEW="${NEW_COMMIT:0:7}"
@@ -32,7 +30,7 @@ send_discord_embed() {
         -H "Content-Type: application/json" \
         -d "{
             \"username\": \"Deploy Bot\",
-            \"avatar_url\": \"https://i.imgur.com/4M34hi2.png\",
+            \"avatar_url\": \"https://i.imgur.com/azWlZIc.png\",
             \"embeds\": [{
                 \"title\": \"🚀 $APP_NAME Deployment\",
                 \"description\": \"$STATUS\",
@@ -73,7 +71,7 @@ start_bot() {
     echo "[5/5] saving PM2 process list..."
     $PM2 save --force
 
-    send_discord_embed "$ACTION – dependencies updated & bot is online" 5814783
+    send_discord_embed "$ACTION - Bot is now online" 5814783
 }
 
 # Deploy
