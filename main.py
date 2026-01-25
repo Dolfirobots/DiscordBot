@@ -23,23 +23,6 @@ MAIN_CONFIG = Config("config.json")
 
 DEVELOPER_MODE = False
 
-# Old msg service
-ERROR_EMBED = disnake.Embed(
-    title="❌ Error",
-    description="An unexpected error occurred. Please try again later.",
-    color=0xe74c3c
-)
-SUCCESS_EMBED = disnake.Embed(
-    title="✅ Success",
-    description="The action was completed successfully.",
-    color=0x2ecc71
-)
-NO_PERMISSION_EMBED = disnake.Embed(
-    title="🚫 Permission Denied",
-    description="You do not have the required permissions to use this command.",
-    color=0xe74c3c
-)
-
 MODULE_PREFIX = "Modules"
 
 # Bot configuration
