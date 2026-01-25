@@ -2,6 +2,8 @@
 set -e
 
 # Config
+# Crontab config:
+# */5 * * * * echo "--- $(date) ---" >> .../logs/deploy.log && /usr/bin/flock -n .../deploy.lock /bin/bash .../DiscordBot/deploy.sh >> .../logs/deploy.log 2>&1
 APP_NAME="dolfi-bot"
 PYTHON_BIN="python3"
 MAIN_FILE="main.py"
@@ -16,6 +18,41 @@ fi
 
 cd "$REPO_DIR"
 
+send_discord_embed() {
+    local STATUS="$1"
+    local COLOR="$2"
+
+    local HOSTNAME="$(hostname)"
+    local USERNAME="$(whoami)"
+    local DATE="$(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+    local SHORT_OLD="${OLD_COMMIT:0:7}"
+    local SHORT_NEW="${NEW_COMMIT:0:7}"
+
+    curl -s -X POST "$DISCORD_WEBHOOK_URL" \
+        -H "Content-Type: application/json" \
+        -d "{
+            \"username\": \"Deploy Bot\",
+            \"avatar_url\": \"https://i.imgur.com/4M34hi2.png\",
+            \"embeds\": [{
+                \"title\": \"🚀 $APP_NAME Deployment\",
+                \"description\": \"$STATUS\",
+                \"color\": $COLOR,
+                \"fields\": [
+                    {\"name\": \"🖥 Server\", \"value\": \"$HOSTNAME\", \"inline\": true},
+                    {\"name\": \"👤 User\", \"value\": \"$USERNAME\", \"inline\": true},
+                    {\"name\": \"📦 App\", \"value\": \"$APP_NAME\", \"inline\": true},
+
+                    {\"name\": \"🔀 Old Commit\", \"value\": \"\`$SHORT_OLD\`\", \"inline\": true},
+                    {\"name\": \"✨ New Commit\", \"value\": \"\`$SHORT_NEW\`\", \"inline\": true},
+                    {\"name\": \"⚡ Force Mode\", \"value\": \"$FORCE\", \"inline\": true}
+                ],
+                \"footer\": {
+                    \"text\": \"Deployed at $DATE\"
+                }
+            }]
+        }"
+}
+
 start_bot() {
     echo "[4/5] managing $APP_NAME process..."
 
@@ -28,13 +65,18 @@ start_bot() {
     if $PM2 describe "$APP_NAME" > /dev/null 2>&1; then
         echo "Restarting $APP_NAME..."
         $PM2 restart "$APP_NAME"
+        ACTION="Bot updated and restarted"
     else
         echo "Starting $APP_NAME..."
         $PM2 start ./venv/bin/python --name "$APP_NAME" -- "$MAIN_FILE"
+        ACTION="Bot started"
     fi
+
 
     echo "[5/5] saving PM2 process list..."
     $PM2 save --force
+
+    send_discord_embed "$ACTION – dependencies updated & bot is online" 5814783
 }
 
 # Deploy
@@ -63,9 +105,16 @@ echo "[3/5] installing/updating dependencies..."
 ./venv/bin/pip install --upgrade pip
 ./venv/bin/pip install -r requirements.txt
 
-# Env check
-if [ ! -f ".env" ]; then
-    echo "ERROR: .env file missing in $REPO_DIR"
+# .env check
+if [ -f ".env" ]; then
+    export $(grep -v '^#' .env | xargs)
+else
+    echo "ERROR: .env file missing"
+    exit 1
+fi
+
+if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+    echo "ERROR: DISCORD_WEBHOOK_URL not set"
     exit 1
 fi
 
