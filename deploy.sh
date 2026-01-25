@@ -1,31 +1,56 @@
 #!/bin/bash
-
 set -e
 
-# --- Configuration ---
-# More in deploy_start.sh
+# Config
+APP_NAME="dolfi-bot"
+PYTHON_BIN="python3"
+MAIN_FILE="main.py"
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+FORCE=false
 
-# Ensure we are in the correct directory
+export PATH="/usr/local/bin:/usr/bin:/bin"
+
+if [[ "$1" == "--force" ]]; then
+    FORCE=true
+fi
+
 cd "$REPO_DIR"
 
+start_bot() {
+    echo "[4/5] managing $APP_NAME process..."
+
+    PM2="$(command -v pm2)"
+    if [ -z "$PM2" ]; then
+        echo "ERROR: pm2 not found in PATH"
+        exit 1
+    fi
+
+    if $PM2 describe "$APP_NAME" > /dev/null 2>&1; then
+        echo "Restarting $APP_NAME..."
+        $PM2 restart "$APP_NAME"
+    else
+        echo "Starting $APP_NAME..."
+        $PM2 start ./venv/bin/python --name "$APP_NAME" -- "$MAIN_FILE"
+    fi
+
+    echo "[5/5] saving PM2 process list..."
+    $PM2 save --force
+}
+
+# Deploy
 echo "----------------------------------------------"
-echo "[0/5] starting deployment: dolfi-bot"
+echo "[0/5] starting deployment: $APP_NAME"
 echo "----------------------------------------------"
 
-# Update code and check
 echo "[1/5] checking for latest changes from GitHub..."
 git fetch origin main
 
 OLD_COMMIT=$(git rev-parse HEAD)
-
 git reset --hard origin/main
 chmod +x deploy.sh
-chmod +x deploy_start.sh
-
 NEW_COMMIT=$(git rev-parse HEAD)
 
-# Virtual Environment Setup
+# Virtual python env
 if [ ! -d "venv" ]; then
     echo "[2/5] creating virtual environment..."
     $PYTHON_BIN -m venv venv
@@ -38,18 +63,21 @@ echo "[3/5] installing/updating dependencies..."
 ./venv/bin/pip install --upgrade pip
 ./venv/bin/pip install -r requirements.txt
 
-# Environment Check
+# Env check
 if [ ! -f ".env" ]; then
-    echo "-------------------------------------------------------"
     echo "ERROR: .env file missing in $REPO_DIR"
-    echo "Please create it manually or upload it once."
-    echo "-------------------------------------------------------"
     exit 1
 fi
 
-if [ "$OLD_COMMIT" != "$NEW_COMMIT" ]; then
+# Github check
+if $FORCE; then
+    echo "----------------------------------------------"
+    echo "FORCE mode enabled – restarting bot"
+    echo "----------------------------------------------"
+    start_bot
+elif [ "$OLD_COMMIT" != "$NEW_COMMIT" ]; then
     echo "New changes detected! Proceeding with update..."
-    /bin/bash deploy_start.sh
+    start_bot
 else
     echo "----------------------------------------------"
     echo "No changes detected. Skipping restart."
