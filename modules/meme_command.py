@@ -43,7 +43,7 @@ class MemeCommand(commands.Cog):
         if not CACHED_CHANNELS:
             embed = ErrorEmbed(
                 "Meme commands are currently disabled everywhere.",
-                time_ms=time.time_ns() - ns_time,
+                time=time.time_ns() - ns_time,
                 service="Memes"
             )
             await inter.response.send_message(embed=embed, ephemeral=True, delete_after=5)
@@ -53,7 +53,7 @@ class MemeCommand(commands.Cog):
             mention_list = [f"<#{channel_id}>" for channel_id in CACHED_CHANNELS]
             embed = ErrorEmbed(
                 f"This command can only be used in following channels: {', '.join(mention_list)}!",
-                time_ms=time.time_ns() - ns_time,
+                time=time.time_ns() - ns_time,
                 service="Memes"
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
@@ -95,7 +95,7 @@ class MemeCommand(commands.Cog):
                 except Exception as e:
                     logger.error(f"Connection error: {e}", "Meme Command")
                     await inter.edit_original_response(content=None, embed=ErrorEmbed(
-                        time_ms=time.time_ns() - ns_time,
+                        time=time.time_ns() - ns_time,
                         service="Memes"
                     ))
                     return
