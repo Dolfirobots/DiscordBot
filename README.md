@@ -27,14 +27,14 @@ with a lot of functions.
 - 💾 SQLite support
 - 🎟️ Ticket system
 - 🤣 /meme command
+- 📗 /help command
 - 🟢 Server stats in profile
-
 
 ## ⏳ Planned
 - 🟢 Server status in channel
 - ⚠️ Report message
-- 📗 /help command
 - 🏃‍➡️ Make it faster
+- 😊 More cool commands
 - 💬 Per user language
   - German
   - English
