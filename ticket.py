@@ -10,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 from main import MAIN_CONFIG
 from utils import FooterEmbed
 from logger import logger
+from modules import manage_module
 
 PERFIX = "Database"
 DATABASE = "assets/tickets.db"
@@ -58,8 +59,6 @@ class Ticket:
 
     async def create(self) -> disnake.TextChannel:
         ns_time = time.time_ns()
-        
-        from modules import manage_module
 
         guild = self.bot.get_guild(self.guild_id)
         if not guild:
@@ -77,29 +76,7 @@ class Ticket:
 
         channel = await self.update_channel()
 
-        welcome_embed = disnake.Embed(
-            title="🎫 Ticket Support",
-            description=(
-                f"Hello <@{self.user_id}>, welcome to your ticket.\n"
-                "Our staff team has been notified and will assist you shortly.\n\n"
-                f"**Selected Category:** *{self.category.get_title()}*"
-            ),
-            color=0x2b2d31
-        )
-
-        welcome_embed = FooterEmbed(
-            embed=welcome_embed,
-            service="Tickets",
-            time=time.time_ns() - ns_time
-        )
-
-        admin_pings = " ".join([f"<@&{role_id}>" for role_id in self.category.get_roles()])
-
-        manage_message = await channel.send(
-            content=f"<@{self.user_id}> {admin_pings}", 
-            embed=welcome_embed,
-            view=manage_module.ManageView()
-        )
+        manage_message = await send_manage_embed(self, ns_time, channel)
 
         self.manage_id = manage_message.id
         async with aiosqlite.connect(DATABASE) as db:
@@ -314,8 +291,31 @@ async def init_db():
         """)
         await db.commit()
 
+async def send_manage_embed(ticket: Ticket, ns_time: int, channel: disnake.TextChannel) -> disnake.Message:
+    embed = disnake.Embed(
+        title="🎫 Ticket Support",
+        description=(
+            f"Hello <@{ticket.user_id}>, welcome to your ticket.\n"
+            "Our staff team has been notified and will assist you shortly.\n\n"
+            f"**Selected Category:** *{ticket.category.get_title()}*"
+        ),
+        color=0x2b2d31
+    )
 
-async def CREATE_EMBED(inter) -> disnake.Embed:
+    embed = FooterEmbed(
+        embed=embed,
+        service="Tickets",
+        time=time.time_ns() - ns_time
+    )
+    admin_pings = " ".join([f"<@&{role_id}>" for role_id in ticket.category.get_roles()])
+
+    return await channel.send(
+        content=f"<@{ticket.user_id}> {admin_pings}",
+        embed=embed,
+        view=manage_module.ManageView() if ticket.state == TicketState.OPEN else manage_module.ClosedManageView()
+    )
+
+async def get_create_embed(bot: commands.Bot) -> disnake.Embed:
     data = await MAIN_CONFIG.load_json()
     icon = data.get("emojis", {}).get("ticket", "🎫")
 
@@ -340,6 +340,6 @@ async def CREATE_EMBED(inter) -> disnake.Embed:
     embed = FooterEmbed(
         embed=embed,
         service="Tickets",
-        icon_url=inter.bot.user.display_avatar.url,
+        icon_url=bot.user.display_avatar.url,
     )
     return embed
