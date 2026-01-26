@@ -90,47 +90,44 @@ class TicketModule(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @commands.slash_command(description="Sends create ticket message")
-    async def setup_ticket(self, inter: disnake.ApplicationCommandInteraction):
+    @commands.command("setup_ticket")
+    async def setup_ticket(self, ctx: commands.Context):
         ns_time = time.time_ns()
-        await inter.response.defer(ephemeral=True)
 
         config_data = await MAIN_CONFIG.load_json()
         admin_roles = config_data.get("roles", {}).get("admin", [])
 
-        user_role_ids = [role.id for role in inter.author.roles]
+        user_role_ids = [role.id for role in ctx.author.roles]
         is_admin = any(role_id in admin_roles for role_id in user_role_ids)
 
         if not is_admin:
-            await inter.followup.send(
+            await ctx.send(
                 embed=PermissionEmbed(
                     service="Tickets",
                     time=time.time_ns() - ns_time
-                ),
-                ephemeral=True
+                )
             )
             return
 
         try:
-            embed = await get_create_embed(inter)
-            await inter.channel.send(embed=embed, view=TicketView())
+            embed = await get_create_embed(ctx.bot)
+            await ctx.channel.send(embed=embed, view=TicketView())
 
-            await inter.followup.send(
+            await ctx.send(
                 embed=SuccessEmbed(
                     "The ticket create message was successfully send in this channel!",
                     service="Tickets",
                     time=time.time_ns() - ns_time
                 ),
-                ephemeral=True
+                delete_after=3
             )
         except Exception as e:
             logger.error(f"Error while sending ticket create message: {e}", PREFIX)
-            await inter.followup.send(
+            await ctx.send(
                 embed=ErrorEmbed(
                     service="Tickets",
                     time=time.time_ns() - ns_time
-                ),
-                ephemeral=True
+                )
             )
 
     @commands.Cog.listener()
