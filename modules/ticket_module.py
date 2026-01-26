@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from logger import logger
 from utils import ErrorEmbed, SuccessEmbed, PermissionEmbed
-from ticket import Ticket, TicketState, TicketCategory, CREATE_EMBED, init_db
+from ticket import Ticket, TicketState, TicketCategory, get_create_embed, init_db
 from main import MAIN_CONFIG
 
 PREFIX = "Ticket Command"
@@ -112,7 +112,7 @@ class TicketModule(commands.Cog):
             return
 
         try:
-            embed = await CREATE_EMBED(inter) 
+            embed = await get_create_embed(inter)
             await inter.channel.send(embed=embed, view=TicketView())
 
             await inter.followup.send(
