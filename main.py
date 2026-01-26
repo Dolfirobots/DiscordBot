@@ -38,6 +38,7 @@ class Bot(commands.Bot):
             intents=intents,
             help_command=None,
             command_sync_flags=commands.CommandSyncFlags.all(),
+            max_messages=1000
         )
         self.started = False
 
