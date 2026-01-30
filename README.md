@@ -34,7 +34,7 @@ with a lot of functions.
 - 🟢 Server status in channel
 - ⚠️ Report message
 - 🏃‍➡️ Make it faster
-- 😊 More cool commands
+- 😊 More cool commands and features
 - 💬 Per user language
   - German
   - English
