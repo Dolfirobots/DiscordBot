@@ -206,7 +206,7 @@ class Ticket:
         await self.update_channel()
 
 
-async def fetch_ticket(bot: commands.Bot, ticket_id: int) -> Ticket:
+async def fetch_ticket(bot: commands.Bot, ticket_id: int) -> Ticket | None:
     async with aiosqlite.connect(DATABASE) as db:
         db.row_factory = aiosqlite.Row
         async with db.execute("SELECT * FROM tickets WHERE ticket_id = ?", (ticket_id,)) as cursor:
@@ -228,7 +228,7 @@ async def fetch_ticket(bot: commands.Bot, ticket_id: int) -> Ticket:
                 )
     return None
 
-async def fetch_ticket_by_channel(bot: commands.Bot, channel_id: int) -> Ticket:
+async def fetch_ticket_by_channel(bot: commands.Bot, channel_id: int) -> Ticket | None:
     async with aiosqlite.connect(DATABASE) as db:
         db.row_factory = aiosqlite.Row
         async with db.execute("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,)) as cursor:
