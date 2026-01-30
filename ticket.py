@@ -10,7 +10,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 from main import MAIN_CONFIG
 from utils import FooterEmbed
 from logger import logger
-import modules.manage_module as manage_module
 
 PREFIX = "Database"
 DATABASE = "assets/tickets.db"
