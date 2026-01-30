@@ -12,7 +12,7 @@ from utils import FooterEmbed
 from logger import logger
 from modules import manage_module
 
-PERFIX = "Database"
+PREFIX = "Database"
 DATABASE = "assets/tickets.db"
 
 class TicketState:
@@ -83,7 +83,7 @@ class Ticket:
             await db.execute("UPDATE tickets SET manage_id = ? WHERE ticket_id = ?", (self.manage_id, self.id))
             await db.commit()
 
-        logger.success(f"Created new ticket: ID: {self.id}, User ID: {self.user_id}, Category: {self.category.get_title()}", PERFIX)
+        logger.success(f"Created new ticket: ID: {self.id}, User ID: {self.user_id}, Category: {self.category.get_title()}", PREFIX)
         return channel
     
     async def update_channel(self) -> disnake.TextChannel:
