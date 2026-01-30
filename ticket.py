@@ -291,6 +291,7 @@ async def init_db():
         await db.commit()
 
 async def send_manage_embed(ticket: Ticket, ns_time: int, channel: disnake.TextChannel) -> disnake.Message:
+    from modules import manage_module
     embed = disnake.Embed(
         title="🎫 Ticket Support",
         description=(
