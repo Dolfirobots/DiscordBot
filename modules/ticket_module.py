@@ -110,6 +110,7 @@ class TicketModule(commands.Cog):
             return
 
         try:
+            await ctx.message.delete()
             embed = await get_create_embed(ctx.bot)
             await ctx.channel.send(embed=embed, view=TicketView())
 
