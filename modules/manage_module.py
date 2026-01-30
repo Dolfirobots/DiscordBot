@@ -53,16 +53,16 @@ class ManageView(disnake.ui.View):
                 ephemeral=True,
                 delete_after=5
             )
-        
+
         if ticket.state == TicketState.CLOSED:
             return await inter.followup.send(
                 embed=ErrorEmbed(
                     "Ticket is already closed!",
-                     time=time.time_ns() - ns_time,
-                     service="Tickets"
+                    time=time.time_ns() - ns_time,
+                    service="Tickets"
                 ),
                 ephemeral=True)
-        
+
         await ticket.update_state(TicketState.CLOSED)
         logger.info(f"Closed ticket by @{inter.author.name}", f"Ticket #{ticket.id}")
 
