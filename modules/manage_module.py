@@ -219,7 +219,6 @@ class ClosedManageView(disnake.ui.View):
         logger.info(f"Deleted ticket by @{inter.author.name}", f"Ticket #{ticket.id}")
         return None
 
-
 class ManageModule(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
