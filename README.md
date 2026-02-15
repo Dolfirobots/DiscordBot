@@ -19,6 +19,8 @@
 The **Dolfirobots Network** Discord bot is a manager Discord bot
 with a lot of functions.
 
+I don't have the time to make newer updates. Please be patient!
+
 ---
 
 ## ✨ Features
