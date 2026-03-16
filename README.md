@@ -41,6 +41,9 @@ I don't have the time to make newer updates. Please be patient!
   - German
   - English
 
+> [!IMPORTANT]
+> The bot will be have a rewrite in Rust or Java.
+
 ---
 
 ## ➕ Creating a new module
